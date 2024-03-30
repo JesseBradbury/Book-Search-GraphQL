@@ -1,15 +1,16 @@
+const { AuthenticationError } = require('apollo-server-errors');
 const { User, Book } = require('../models');
-const { signToken, AuthenticationError } = require('../utils/auth');
+const { signToken } = require('../utils/auth');
 
 const resolvers = {
   Query: {
     user: async (parent, { username }) => {
-      return User.findOne({ username, _id }).populate('savedBooks');
+      return User.findOne({ username }).populate('savedBooks');
     },
   },
 
   Mutation: {
-    createUser: async (parent, { username, email, password }) => {
+    addUser: async (parent, { username, email, password }) => {
       const user = await User.create({ username, email, password });
       const token = signToken(user);
       return { token, user };
@@ -20,23 +21,24 @@ const resolvers = {
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
 
-      if (!user) {
-        throw AuthenticationError;
+      if (!user || !user.isCorrectPassword(password)) {
+        throw new AuthenticationError('Incorrect email or password');
       }
 
-      const correctPw = await user.isCorrectPassword(password);
+      // const correctPw = await user.isCorrectPassword(password);
 
-      if (!correctPw) {
-        throw AuthenticationError;
-      }
 
       const token = signToken(user);
-
       return { token, user };
     },
 
     saveBook: async (parent, { input }, context) => {
-      if (context.user) {
+      
+
+        if (!context.user) {
+          throw new AuthenticationError('You need to be logged in!');
+        }
+
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
           { $addToSet: { savedBooks: input } },
@@ -44,16 +46,18 @@ const resolvers = {
         );
 
         return updatedUser;
-      }
-      throw AuthenticationError;
-      ('You need to be logged in!');
-    },
-   
-    removeBook: async (parent, { bookId }, context) => {
-      if (context.user) {
-        const book = await Book.findOneAndDelete({
-          _id: bookId,
-        });
+      },
+
+      removeBook: async (parent, { bookId }, context) => {
+        if (!context.user) {
+          throw new AuthenticationError('You need to be logged in!');
+        }
+
+        const book = await Book.findOneAndDelete({ _id: bookId });
+
+        if (!book) {
+          throw new Error('Book not found');
+        }
 
         await User.findOneAndUpdate(
           { _id: context.user._id },
@@ -61,10 +65,8 @@ const resolvers = {
         );
 
         return book;
-      }
-      throw AuthenticationError;
+      },
     },
-  },
-};
+  };
 
-module.exports = resolvers;
+  module.exports = resolvers;
