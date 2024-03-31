@@ -45,6 +45,11 @@ const SavedBooks = () => {
 
   const { me: userData } = data;
 
+  //  // Check if userData exists and has savedBooks before accessing it
+  //  if (!userData || !userData.savedBooks) {
+  //   return <h2>You have no saved books!</h2>;
+  // }
+
   return (
     <>
       <div fluid className="text-light bg-dark p-5">
