@@ -13,8 +13,6 @@ This is a exercise in modifying/migrating a Rest API to a GraphQL API. It was al
   - [Installation](#installation)
   - [Usage](#usage)
   - [Example](#example)
-  - [Future Implementation](#future_implementation)
-  - [Contributors](#contributors)
   - [License](#license)
 
 
@@ -27,16 +25,8 @@ To start the site locally with the developer live server, use "npm run developer
 ![screenshot of app](assets/ss1.png)
 
 ## Example:
-[Visit the live page hosted on Render](https://example.com)
+[Visit the live page hosted on Render](https://book-search-graphql.onrender.com/)
 
-## Future Implementation:
-- Future stuff we could add
-
-## Contributors:
-- [Jesse Bradbury](https://github.com/jessebradbury)
-- [Maverick Wolfe](https://github.com/sourylime) 
-- [Victor Garrido](https://github.com/Rojas259)
-- [Justin Johnson](https://github.com/morni33)
 
 ## License:
 -[MIT](https://opensource.org/license/mit/) 
