@@ -7,6 +7,9 @@ const resolvers = {
     user: async (parent, { username }) => {
       return User.findOne({ username }).populate('savedBooks');
     },
+    me: async(parent, args, context) => {
+      return User.findOne({_id: context.user._id}).populate('savedBooks')
+    }
   },
 
   Mutation: {
@@ -32,7 +35,7 @@ const resolvers = {
       return { token, user };
     },
 
-    saveBook: async (parent, { input }, context) => {
+    saveBook: async (parent, { book }, context) => {
       
 
         if (!context.user) {
@@ -41,7 +44,7 @@ const resolvers = {
 
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
-          { $addToSet: { savedBooks: input } },
+          { $addToSet: { savedBooks: book } },
           { new: true, runValidators: true }
         );
 
